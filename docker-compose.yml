@@ -1,0 +1,35 @@
+services:
+  wordpress:
+    image: wordpress
+    ports:
+      - "8022:80"
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: "password"
+      WORDPRESS_DB_NAME: wordpress
+    restart: always
+    volumes:
+      - ./public_web:/var/www/html  # Mount WordPress files from host
+    networks:
+      tst:
+
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: "password"
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql  # Mount MySQL data
+    networks:
+      tst:
+
+networks:
+  tst:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.56.1.0/24"
